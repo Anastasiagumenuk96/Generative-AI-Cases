@@ -30,11 +30,14 @@ public class CountryFilterBuilder : ICountryFilterBuilder
 
     public ICountryFilterBuilder AddPopulationFilter(int population)
     {
-        var populationInMillions = population * 1000000;
+        if (population > 0)
+        {
+            var populationInMillions = population * 1000000;
 
-        _countries = _countries
-            .Where(x => x.Population < populationInMillions)
-            .ToArray();
+            _countries = _countries
+                .Where(x => x.Population < populationInMillions)
+                .ToArray();
+        }
 
         return this;
     }
