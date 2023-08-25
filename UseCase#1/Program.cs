@@ -1,19 +1,28 @@
+using System.Reflection;
+using MediatR;
+using Microsoft.OpenApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
 
-// Add services to the container.
+services.AddControllers();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen(x => x.SwaggerDoc("v1", new OpenApiInfo { Title = "Use Case #1", Version = "v1" }));
+
+services.AddMediatR(Assembly.GetExecutingAssembly());
+
+services.AddHttpClient();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(x =>
+    {
+        x.SwaggerEndpoint("/swagger/v1/swagger.json", "Use Case #1 API");
+    });
 }
 
 app.UseHttpsRedirection();
