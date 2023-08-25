@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using System.Text.Json;
+using UseCase_1.Interfaces;
 using UseCase_1.Models;
 
 namespace UseCase_1.Queries;
@@ -7,14 +8,19 @@ namespace UseCase_1.Queries;
 public class GetCountriesQuery : IRequest<IReadOnlyCollection<Country>>
 {
     public string CountryNameFilter { get; set; } = string.Empty;
+    public int PopulationFilter { get; set; }
 }
 
 public class GetCountriesQueryHandler : IRequestHandler<GetCountriesQuery, IReadOnlyCollection<Country>>
 {
+    private readonly ICountryFilterBuilder _countriesBuilder;
     private readonly HttpClient _httpClient;
 
-    public GetCountriesQueryHandler(HttpClient httpClient)
+    public GetCountriesQueryHandler(
+        ICountryFilterBuilder countriesBuilder,
+        HttpClient httpClient)
     {
+        _countriesBuilder = countriesBuilder;
         _httpClient = httpClient;
     }
 
@@ -29,14 +35,11 @@ public class GetCountriesQueryHandler : IRequestHandler<GetCountriesQuery, IRead
                 PropertyNameCaseInsensitive = true
             }) ?? Array.Empty<Country>();
 
-        if (string.IsNullOrEmpty(request.CountryNameFilter))
-        {
-            return countries;
-        }
-
-        var filteredCountries = countries
-            .Where(x => x.Name.Common.Contains(request.CountryNameFilter, StringComparison.OrdinalIgnoreCase))
-            .ToArray();
+        var filteredCountries = _countriesBuilder
+            .InitCountries(countries)
+            .AddCountryNameFilter(request.CountryNameFilter)
+            .AddPopulationFilter(request.PopulationFilter)
+            .Build();
 
         return filteredCountries;
     }

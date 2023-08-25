@@ -1,6 +1,8 @@
 using System.Reflection;
 using MediatR;
 using Microsoft.OpenApi.Models;
+using UseCase_1.Filters;
+using UseCase_1.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -13,6 +15,8 @@ services.AddSwaggerGen(x => x.SwaggerDoc("v1", new OpenApiInfo { Title = "Use Ca
 services.AddMediatR(Assembly.GetExecutingAssembly());
 
 services.AddHttpClient();
+
+services.AddScoped<ICountryFilterBuilder, CountryFilterBuilder>();
 
 var app = builder.Build();
 

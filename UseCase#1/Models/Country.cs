@@ -3,5 +3,6 @@
 public class Country
 {
     public Name Name { get; set; } = new();
+    public int Population { get; set; }
 }
 
