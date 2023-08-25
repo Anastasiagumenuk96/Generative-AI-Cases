@@ -17,7 +17,7 @@ public class CountryFilterBuilder : ICountryFilterBuilder
         return this;
     }
 
-    public ICountryFilterBuilder AddCountryNameFilter(string countryName)
+    public ICountryFilterBuilder AddCountryNameFilter(string? countryName)
     {
         if (!string.IsNullOrEmpty(countryName))
         {
@@ -29,11 +29,11 @@ public class CountryFilterBuilder : ICountryFilterBuilder
         return this;
     }
 
-    public ICountryFilterBuilder AddPopulationFilter(int population)
+    public ICountryFilterBuilder AddPopulationFilter(int? population)
     {
-        if (population > 0)
+        if (population.HasValue && population > 0)
         {
-            var populationInMillions = population * 1000000;
+            var populationInMillions = population.Value * 1000000;
 
             _countries = _countries
                 .Where(x => x.Population < populationInMillions)
@@ -43,18 +43,30 @@ public class CountryFilterBuilder : ICountryFilterBuilder
         return this;
     }
 
-    public ICountryFilterBuilder AddCountryNameOrder(string orderOption)
+    public ICountryFilterBuilder AddCountryNameOrder(string? orderOption)
     {
-        if (orderOption.Trim().Equals(Ascend, StringComparison.OrdinalIgnoreCase))
+        if (orderOption?.Trim().Equals(Ascend, StringComparison.OrdinalIgnoreCase) ?? false)
         {
             _countries = _countries
                 .OrderBy(x => x.Name.Common)
                 .ToArray();
         }
-        else if (orderOption.Trim().Equals(Descend, StringComparison.OrdinalIgnoreCase))
+        else if (orderOption?.Trim().Equals(Descend, StringComparison.OrdinalIgnoreCase) ?? false)
         {
             _countries = _countries
                 .OrderByDescending(x => x.Name.Common)
+                .ToArray();
+        }
+
+        return this;
+    }
+
+    public ICountryFilterBuilder AddPagination(int? countriesCount)
+    {
+        if (countriesCount.HasValue && countriesCount > 0)
+        {
+            _countries = _countries
+                .Take(countriesCount.Value)
                 .ToArray();
         }
 

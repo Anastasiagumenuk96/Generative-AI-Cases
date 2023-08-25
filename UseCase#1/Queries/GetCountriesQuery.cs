@@ -7,10 +7,10 @@ namespace UseCase_1.Queries;
 
 public class GetCountriesQuery : IRequest<IReadOnlyCollection<Country>>
 {
-    public string CountryNameFilter { get; set; } = string.Empty;
-    public int PopulationFilter { get; set; }
-    public string OrderByNameOption { get; set; } = "Ascend";
-    public int CountriesCount { get; set; }
+    public string? CountryNameFilter { get; set; } = string.Empty;
+    public int? PopulationFilter { get; set; }
+    public string? OrderByNameOption { get; set; } = "Ascend";
+    public int? CountriesCount { get; set; }
 }
 
 public class GetCountriesQueryHandler : IRequestHandler<GetCountriesQuery, IReadOnlyCollection<Country>>
@@ -42,9 +42,8 @@ public class GetCountriesQueryHandler : IRequestHandler<GetCountriesQuery, IRead
             .AddCountryNameFilter(request.CountryNameFilter)
             .AddPopulationFilter(request.PopulationFilter)
             .AddCountryNameOrder(request.OrderByNameOption)
-            .Build()
-            .Take(request.CountriesCount)
-            .ToArray();
+            .AddPagination(request.CountriesCount)
+            .Build();
 
         return filteredCountries;
     }

@@ -6,8 +6,9 @@ public interface ICountryFilterBuilder
 {
     Country[] Build();
     ICountryFilterBuilder InitCountries(Country[] countries);
-    ICountryFilterBuilder AddCountryNameFilter(string countryName);
-    ICountryFilterBuilder AddPopulationFilter(int population);
-    ICountryFilterBuilder AddCountryNameOrder(string orderOption);
+    ICountryFilterBuilder AddCountryNameFilter(string? countryName);
+    ICountryFilterBuilder AddPopulationFilter(int? population);
+    ICountryFilterBuilder AddCountryNameOrder(string? orderOption);
+    ICountryFilterBuilder AddPagination(int? countriesCount);
 }
 
