@@ -6,6 +6,7 @@ namespace UseCase_1.Queries;
 
 public class GetCountriesQuery : IRequest<IReadOnlyCollection<Country>>
 {
+    public string CountryNameFilter { get; set; } = string.Empty;
 }
 
 public class GetCountriesQueryHandler : IRequestHandler<GetCountriesQuery, IReadOnlyCollection<Country>>
@@ -23,12 +24,21 @@ public class GetCountriesQueryHandler : IRequestHandler<GetCountriesQuery, IRead
 
         var countries = JsonSerializer.Deserialize<Country[]>(
             response.Content.ReadAsStringAsync(cancellationToken).Result,
-            new JsonSerializerOptions()
+            new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
-            });
+            }) ?? Array.Empty<Country>();
 
-        return countries ?? Array.Empty<Country>();
+        if (string.IsNullOrEmpty(request.CountryNameFilter))
+        {
+            return countries;
+        }
+
+        var filteredCountries = countries
+            .Where(x => x.Name.Common.Contains(request.CountryNameFilter, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+
+        return filteredCountries;
     }
 }
 

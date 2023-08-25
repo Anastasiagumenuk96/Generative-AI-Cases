@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using UseCase_1.Queries;
+using UseCase_1.Models;
+
 namespace UseCase_1.Controllers;
 
 [ApiController]
@@ -11,10 +13,10 @@ public class ApiController : ControllerBase
 
     public ApiController(IMediator mediator) => _mediator = mediator;   
     
-    [HttpGet("Countries")]
-    public async Task<ActionResult> GetCountries()
+    [HttpPost("Countries")]
+    public async Task<ActionResult<IReadOnlyCollection<Country>>> GetCountries(GetCountriesQuery query)
     {
-        var request = await _mediator.Send(new GetCountriesQuery());
+        var request = await _mediator.Send(query);
 
         return Ok(request);
     }
