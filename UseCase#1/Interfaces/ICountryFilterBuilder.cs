@@ -8,5 +8,6 @@ public interface ICountryFilterBuilder
     ICountryFilterBuilder InitCountries(Country[] countries);
     ICountryFilterBuilder AddCountryNameFilter(string countryName);
     ICountryFilterBuilder AddPopulationFilter(int population);
+    ICountryFilterBuilder AddCountryNameOrder(string orderOption);
 }
 

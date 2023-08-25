@@ -1,5 +1,6 @@
 ﻿using UseCase_1.Interfaces;
 using UseCase_1.Models;
+using static UseCase_1.Constants.OrderOptions;
 
 namespace UseCase_1.Filters;
 
@@ -36,6 +37,24 @@ public class CountryFilterBuilder : ICountryFilterBuilder
 
             _countries = _countries
                 .Where(x => x.Population < populationInMillions)
+                .ToArray();
+        }
+
+        return this;
+    }
+
+    public ICountryFilterBuilder AddCountryNameOrder(string orderOption)
+    {
+        if (orderOption.Trim().Equals(Ascend, StringComparison.OrdinalIgnoreCase))
+        {
+            _countries = _countries
+                .OrderBy(x => x.Name.Common)
+                .ToArray();
+        }
+        else if (orderOption.Trim().Equals(Descend, StringComparison.OrdinalIgnoreCase))
+        {
+            _countries = _countries
+                .OrderByDescending(x => x.Name.Common)
                 .ToArray();
         }
 

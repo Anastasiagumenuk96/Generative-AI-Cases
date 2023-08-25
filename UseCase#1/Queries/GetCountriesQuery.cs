@@ -2,7 +2,6 @@
 using System.Text.Json;
 using UseCase_1.Interfaces;
 using UseCase_1.Models;
-using static UseCase_1.Constants.OrderOptions;
 
 namespace UseCase_1.Queries;
 
@@ -11,6 +10,7 @@ public class GetCountriesQuery : IRequest<IReadOnlyCollection<Country>>
     public string CountryNameFilter { get; set; } = string.Empty;
     public int PopulationFilter { get; set; }
     public string OrderByNameOption { get; set; } = "Ascend";
+    public int CountriesCount { get; set; }
 }
 
 public class GetCountriesQueryHandler : IRequestHandler<GetCountriesQuery, IReadOnlyCollection<Country>>
@@ -41,20 +41,10 @@ public class GetCountriesQueryHandler : IRequestHandler<GetCountriesQuery, IRead
             .InitCountries(countries)
             .AddCountryNameFilter(request.CountryNameFilter)
             .AddPopulationFilter(request.PopulationFilter)
-            .Build();
-
-        if (request.OrderByNameOption.Trim().Equals(Ascend, StringComparison.OrdinalIgnoreCase))
-        {
-            filteredCountries = filteredCountries
-                .OrderBy(x => x.Name.Common)
-                .ToArray();
-        }
-        else if (request.OrderByNameOption.Trim().Equals(Descend, StringComparison.OrdinalIgnoreCase))
-        {
-            filteredCountries = filteredCountries
-                .OrderByDescending(x => x.Name.Common)
-                .ToArray();
-        }
+            .AddCountryNameOrder(request.OrderByNameOption)
+            .Build()
+            .Take(request.CountriesCount)
+            .ToArray();
 
         return filteredCountries;
     }
